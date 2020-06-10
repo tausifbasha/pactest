@@ -8,7 +8,8 @@ from flask import Flask, abort, jsonify, request
 
 #Command: http 127.0.0.1:5001/users/Jendrik
 fakedb = {}
-fakedb["Jendrik"] = {'name': "Jendrik", 'id': '1234567', 'created_on': datetime.datetime.now(), 'admin': False}
+date_string = datetime.datetime.today().strftime('%Y-%m-%d-%H:%M:%S')
+fakedb["Jendrik"] = {'name': "Jendrik", 'id': '00000000-0000-4000-a000-000000000000', 'created_on': date_string, 'admin': False}
 
 app = Flask(__name__)
 
@@ -26,7 +27,7 @@ def setup_no_user_a():
 
 
 def setup_user_a_nonadmin():
-    fakedb['UserA'] = {'name': "UserA", 'id': '1234567', 'created_on': datetime.datetime.now(), 'admin': False}
+    fakedb['UserA'] = {'name': "UserA", 'id': '00000000-0000-4000-a000-000000000000', 'created_on': date_string, 'admin': False}
 
 
 @app.route('/users/<name>')

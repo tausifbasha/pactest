@@ -18,7 +18,7 @@ PACT_UPLOAD_URL = (
     "http://127.0.0.1/pacts/provider/UserService/consumer"
     "/UserServiceClient/version"
 )
-PACT_FILE = "userserviceclient-userservice.json"
+PACT_FILE = "UserServiceClient-UserService-pact.json"
 PACT_BROKER_USERNAME = "pactbroker"
 PACT_BROKER_PASSWORD = "pactbroker"
 
@@ -42,7 +42,6 @@ def push_to_broker(version):
     basic_auth = HTTPBasicAuth(PACT_BROKER_USERNAME, PACT_BROKER_PASSWORD)
 
     log.info("Uploading pact file to pact broker...")
-
     r = requests.put(
         "{}/{}".format(PACT_UPLOAD_URL, version),
         auth=basic_auth,
@@ -75,8 +74,8 @@ def test_get_user_non_admin(pact, client):
             '00000000-0000-4000-a000-000000000000'
         ),
         'created_on': Term(
-            r'\d+-\d+-\d+T\d+:\d+:\d+',
-            '2016-12-15T20:16:01'
+            r'\d+-\d+-\d+-\d+:\d+:\d+',
+            '2016-12-15-20:16:01'
         ),
         'admin': False
     }
