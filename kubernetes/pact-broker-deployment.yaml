@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -6,6 +6,9 @@ metadata:
   name: pact-the-broker
   namespace: pact
 spec:
+  selector:
+    matchLabels:
+      io.kompose.service: pact-the-broker
   replicas: 1
   strategy: {}
   template:

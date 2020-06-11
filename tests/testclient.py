@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 PACT_UPLOAD_URL = (
-    "http://127.0.0.1/pacts/provider/UserService/consumer"
+    "http://172.17.0.2:32033/pacts/provider/UserService/consumer"
     "/UserServiceClient/version"
 )
 PACT_FILE = "UserServiceClient-UserService-pact.json"
