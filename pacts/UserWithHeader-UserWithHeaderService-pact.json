@@ -1,9 +1,9 @@
 {
   "consumer": {
-    "name": "UserServiceClient"
+    "name": "UserWithHeader"
   },
   "provider": {
-    "name": "UserService"
+    "name": "UserWithHeaderService"
   },
   "interactions": [
     {
@@ -11,14 +11,17 @@
       "description": "a request for UserA",
       "request": {
         "method": "get",
-        "path": "/users/UserA"
+        "path": "/users/UserA",
+        "headers": {
+          "authorization": "Bearer 58771381-333e-334f-9604-784"
+        }
       },
       "response": {
         "status": 200,
         "body": {
           "name": "UserA",
           "id": "00000000-0000-4000-a000-000000000000",
-          "created_on": "2016-12-15T20:16:01",
+          "created_on": "2016-12-15-20:16:01",
           "admin": false
         },
         "matchingRules": {
@@ -29,20 +32,9 @@
             "regex": "^[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12}\\Z"
           },
           "$.body.created_on": {
-            "regex": "\\d+-\\d+-\\d+T\\d+:\\d+:\\d+"
+            "regex": "\\d+-\\d+-\\d+-\\d+:\\d+:\\d+"
           }
         }
-      }
-    },
-    {
-      "providerState": "UserA does not exist",
-      "description": "a request for UserA",
-      "request": {
-        "method": "get",
-        "path": "/users/UserA"
-      },
-      "response": {
-        "status": 404
       }
     }
   ],

@@ -13,24 +13,25 @@ from pactman import Consumer, Like, Provider, Term
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
-
 PACT_UPLOAD_URL = (
-    "http://127.0.0.1/pacts/provider/UserService/consumer"
-    "/UserServiceClient/version"
+    "http://127.0.0.1/pacts/provider/UserWithHeaderService/consumer"
+    "/UserWithHeader/version"
 )
-PACT_FILE = "UserServiceClient-UserService-pact.json"
+PACT_FILE = "UserWithHeader-UserWithHeaderService-pact.json"
 PACT_BROKER_USERNAME = "pactbroker"
 PACT_BROKER_PASSWORD = "pactbroker"
-
+# passing headers
+h = {'authorization': 'Bearer 58771381-333e-334f-9604-784'}
 PACT_MOCK_HOST = 'localhost'
 PACT_MOCK_PORT = 1234
 PACT_DIR = os.path.dirname(os.path.realpath(__file__))
+
 
 @pytest.fixture
 def client():
     return UserClient(
         'http://{host}:{port}'
-        .format(host=PACT_MOCK_HOST, port=PACT_MOCK_PORT)
+            .format(host=PACT_MOCK_HOST, port=PACT_MOCK_PORT)
     )
 
 
@@ -54,8 +55,8 @@ def push_to_broker(version):
 
 @pytest.fixture(scope='session')
 def pact(request):
-    pact = Consumer('UserServiceClient').has_pact_with(
-        Provider('UserService'), host_name=PACT_MOCK_HOST, port=PACT_MOCK_PORT,
+    pact = Consumer('UserWithHeader').has_pact_with(
+        Provider('UserWithHeaderService'), host_name=PACT_MOCK_HOST, port=PACT_MOCK_PORT,
         pact_dir=PACT_DIR)
     pact.start_service()
     yield pact
@@ -82,23 +83,8 @@ def test_get_user_non_admin(pact, client):
     (pact
      .given('UserA exists and is not an administrator')
      .upon_receiving('a request for UserA')
-     .with_request('get', '/users/UserA')
+     .with_request('get', '/users/UserA', headers={'authorization': 'Bearer 58771381-333e-334f-9604-784'})
      .will_respond_with(200, body=Like(expected)))
 
     with pact:
-        result = client.get_user('UserA')
-
-    # assert something with the result, for ex, did I process 'result' properly?
-    # or was I able to deserialize correctly? etc.
-
-
-def test_get_non_existing_user(pact, client):
-    (pact
-     .given('UserB does not exist')
-     .upon_receiving('a request for UserB')
-     .with_request('get', '/users/UserB')
-     .will_respond_with(404))
-    with pact:
-        result = client.get_user('UserB')
-
-    assert result is None
+        result = client.get_user_with_header('UserA',h)
