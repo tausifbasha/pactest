@@ -11,6 +11,5 @@ pipeline {
         sh 'python --version'
       }
     }
-
   }
 }
