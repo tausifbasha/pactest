@@ -1,27 +1,22 @@
 {
   "consumer": {
-    "name": "UserWithHeader"
+    "name": "UserServiceClient"
   },
   "provider": {
-    "name": "UserWithHeaderService"
+    "name": "UserService"
   },
   "interactions": [
     {
       "providerStates": [
         {
           "name": "UserA exists and is not an administrator",
-          "params": {
-            "username": "Jendrik"
-          }
+          "params": {}
         }
       ],
       "description": "a request for UserA",
       "request": {
         "method": "get",
-        "path": "/users/UserA",
-        "headers": {
-          "authorization": "Bearer 58771381-333e-334f-9604-784"
-        }
+        "path": "/users/UserA"
       },
       "response": {
         "status": 200,
@@ -58,6 +53,22 @@
             }
           }
         }
+      }
+    },
+    {
+      "providerStates": [
+        {
+          "name": "UserB does not exist",
+          "params": {}
+        }
+      ],
+      "description": "a request for UserB",
+      "request": {
+        "method": "get",
+        "path": "/users/UserB"
+      },
+      "response": {
+        "status": 404
       }
     }
   ],

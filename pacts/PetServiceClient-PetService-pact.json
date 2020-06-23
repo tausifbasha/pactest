@@ -1,35 +1,35 @@
 {
   "consumer": {
-    "name": "UserWithHeader"
+    "name": "PetServiceClient"
   },
   "provider": {
-    "name": "UserWithHeaderService"
+    "name": "PetService"
   },
   "interactions": [
     {
       "providerStates": [
         {
-          "name": "UserA exists and is not an administrator",
-          "params": {
-            "username": "Jendrik"
-          }
+          "name": "Pet Order is Ready",
+          "params": {}
         }
       ],
-      "description": "a request for UserA",
+      "description": "a request for order",
       "request": {
         "method": "get",
-        "path": "/users/UserA",
-        "headers": {
-          "authorization": "Bearer 58771381-333e-334f-9604-784"
-        }
+        "path": "/store/order/3"
       },
       "response": {
         "status": 200,
         "body": {
-          "name": "UserA",
-          "id": "00000000-0000-4000-a000-000000000000",
-          "created_on": "2016-12-15-20:16:01",
-          "admin": false
+          "id": 0,
+          "petId": 0,
+          "shipDate": "1944-02-07T13:54:19.92Z",
+          "quantity": 0,
+          "status": "placed",
+          "complete": false
+        },
+        "headers": {
+          "Content-Type": "application/json"
         },
         "matchingRules": {
           "body": {
@@ -40,19 +40,19 @@
                 }
               ]
             },
-            "$.id": {
+            "$.shipDate": {
               "matchers": [
                 {
                   "match": "regex",
-                  "regex": "^[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12}\\Z"
+                  "regex": "\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z"
                 }
               ]
             },
-            "$.created_on": {
+            "$.status": {
               "matchers": [
                 {
                   "match": "regex",
-                  "regex": "\\d+-\\d+-\\d+-\\d+:\\d+:\\d+"
+                  "regex": "\\w+"
                 }
               ]
             }

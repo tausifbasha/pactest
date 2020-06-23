@@ -13,25 +13,26 @@ from pactman import Consumer, Like, Provider, Term
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
+
 PACT_UPLOAD_URL = (
-    "http://127.0.0.1/pacts/provider/UserWithHeaderService/consumer"
-    "/UserWithHeader/version"
+    "http://127.0.0.1/pacts/provider/PetService/consumer"
+    "/PetServiceClient/version"
 )
-PACT_FILE = "UserWithHeader-UserWithHeaderService-pact.json"
+h = {'Content-Type': 'application/json'}
+
+PACT_FILE = "PetServiceClient-PetService-pact.json"
 PACT_BROKER_USERNAME = "pactbroker"
 PACT_BROKER_PASSWORD = "pactbroker"
-# passing headers
-h = {'authorization': 'Bearer 58771381-333e-334f-9604-784'}
+
 PACT_MOCK_HOST = 'localhost'
 PACT_MOCK_PORT = 1234
 PACT_DIR = os.path.dirname(os.path.abspath(__file__)).replace("tests","pacts")
-
 
 @pytest.fixture
 def client():
     return UserClient(
         'http://{host}:{port}'
-            .format(host=PACT_MOCK_HOST, port=PACT_MOCK_PORT)
+        .format(host=PACT_MOCK_HOST, port=PACT_MOCK_PORT)
     )
 
 
@@ -55,8 +56,8 @@ def push_to_broker(version):
 
 @pytest.fixture(scope='session')
 def pact(request):
-    pact = Consumer('UserWithHeader').has_pact_with(
-        Provider('UserWithHeaderService'), host_name=PACT_MOCK_HOST, port=PACT_MOCK_PORT,
+    pact = Consumer('PetServiceClient').has_pact_with(
+        Provider('PetService'), host_name=PACT_MOCK_HOST, port=PACT_MOCK_PORT,
         pact_dir=PACT_DIR,version="3.0.0")
     pact.start_service()
     yield pact
@@ -67,24 +68,30 @@ def pact(request):
         push_to_broker(version)
 
 
-def test_get_user_non_admin(pact, client):
+def test_pet_as_default(pact, client):
     expected = {
-        'name': 'UserA',
-        'id': Term(
-            r'^[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12}\Z',
-            '00000000-0000-4000-a000-000000000000'
+        'id': 0,
+        'petId': 0,
+        'shipDate': Term(
+            r'\d+-\d+-\d+T\d+:\d+:\d+.\d+Z',
+            '1944-02-07T13:54:19.92Z'
         ),
-        'created_on': Term(
-            r'\d+-\d+-\d+-\d+:\d+:\d+',
-            '2016-12-15-20:16:01'
+        'quantity': 0,
+        'status': Term(
+            r'\w+',
+            'placed'
         ),
-        'admin': False
+        'complete': False
     }
     (pact
-     .given('UserA exists and is not an administrator',username="Jendrik")
-     .upon_receiving('a request for UserA')
-     .with_request('get', '/users/UserA', headers={'authorization': 'Bearer 58771381-333e-334f-9604-784'})
-     .will_respond_with(200, body=Like(expected)))
+     .given('Pet Order is Ready')
+     .upon_receiving('a request for order')
+     .with_request('get', '/store/order/3')
+     .will_respond_with(200, headers={'Content-Type': 'application/json'},body=Like(expected)))
 
     with pact:
-        result = client.get_user_with_header('UserA',h)
+        result = client.get_order('3')
+
+    # assert something with the result, for ex, did I process 'result' properly?
+    # or was I able to deserialize correctly? etc.
+

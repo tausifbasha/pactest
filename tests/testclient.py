@@ -24,7 +24,7 @@ PACT_BROKER_PASSWORD = "pactbroker"
 
 PACT_MOCK_HOST = 'localhost'
 PACT_MOCK_PORT = 1234
-PACT_DIR = os.path.dirname(os.path.realpath(__file__))
+PACT_DIR = os.path.dirname(os.path.abspath(__file__)).replace("tests","pacts")
 
 @pytest.fixture
 def client():
@@ -56,7 +56,7 @@ def push_to_broker(version):
 def pact(request):
     pact = Consumer('UserServiceClient').has_pact_with(
         Provider('UserService'), host_name=PACT_MOCK_HOST, port=PACT_MOCK_PORT,
-        pact_dir=PACT_DIR)
+        pact_dir=PACT_DIR,version="3.0.0")
     pact.start_service()
     yield pact
     pact.stop_service()
